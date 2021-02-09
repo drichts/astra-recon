@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 pixel_pitch = 1  # [mm]
 source_origin = 322.0 * 3  # [mm]
 origin_det = 256.0 * 3  # [mm]
-
+d
 raw_data = np.load(r'/home/knoll/LDAData/data_corr.npy')[:, :, :, 6]
 
 num_bins = 7
