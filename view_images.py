@@ -3,19 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat, savemat
 
-folder = '/home/knoll/LDAData/CT_02_03_21_v3/CT'
+folder = '/home/knoll/LDAData/21-02-18_CT_water_only/phantom_scan/CT'
 
-data_c = np.load(os.path.join(folder, 'CGLSCT.npy'))
-data_s = np.load(os.path.join(folder, 'SIRTCT.npy'))
+# data_c = np.load(os.path.join(folder, 'CGLSCT.npy'))
+# data_s = np.load(os.path.join(folder, 'SIRTCT.npy'))
 data_f = np.load(os.path.join(folder, 'FDK_CT.npy'))
 
 fig, ax = plt.subplots(1, 3, figsize=(12, 6))
-ax[0].imshow(data_f[11], cmap='gray', vmin=0, vmax=0.08)
-ax[0].set_title('FDK')
-ax[1].imshow(data_s[11], cmap='gray', vmin=0, vmax=0.08)
-ax[1].set_title('SIRT')
-ax[2].imshow(data_c[11], cmap='gray', vmin=0, vmax=0.08)
-ax[2].set_title('CGLS')
+ax[0].imshow(data_f[2, 11], cmap='gray', vmin=0, vmax=0.08)
+# ax[0].set_title('FDK')
+ax[1].imshow(data_f[3, 11], cmap='gray', vmin=0, vmax=0.08)
+# ax[1].set_title('SIRT')
+ax[2].imshow(data_f[4, 11], cmap='gray', vmin=0, vmax=0.08)
+# ax[2].set_title('CGLS')
 plt.show()
 
 ## Iteration check
