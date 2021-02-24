@@ -25,13 +25,21 @@ def run_full_recon(folder, alg, iterations, bins=bins):
 
     # Reconstruct all the bins
     start = datetime.now().timestamp()
+
+    if alg != 'FDK_CUDA':
+        ct_data = np.load(os.path.join(directory, folder, 'CT', 'FDK_CT.npy'))
+
+    raw_data_full = np.load(os.path.join(directory, folder, 'Data', 'data_corr_no_filt.npy'))
+    raw_data_full = np.transpose(raw_data_full, axes=(3, 1, 0, 2))  # Transpose to (bins, rows, angles, columns)
+
+    # Change if isocentre is not directly in the center of the detector
+    # raw_data_full = np.roll(raw_data_full, -2, axis=3)
+    
     for bin_num in bins:
-        raw_data = np.load(os.path.join(directory, folder, 'Data', 'data_corr_2.npy'))[:, :, :, bin_num]
-        raw_data = np.transpose(raw_data, axes=(1, 0, 2))  # Transpose to (rows, angles, columns)
-
-        # Change if isocentre is not directly in the center of the detector
-        # raw_data = np.roll(raw_data, -2, axis=2)
-
+        
+        # Get the right bin number
+        raw_data = raw_data_full[bin_num]
+        
         # Create a 3D projection geometry with our cone-beam data
         # Parameters: 'acquisition type', number of detector rows, number of detector columns, data ndarray
         proj_geom = astra.create_proj_geom('cone', pixel_pitch, pixel_pitch, det_row_count, det_col_count, angles,
@@ -46,8 +54,7 @@ def run_full_recon(folder, alg, iterations, bins=bins):
         if alg == 'FDK_CUDA':
             recon_id = astra.data3d.create('-vol', vol_geom)
         else:
-            ct_data = np.load(os.path.join(directory, folder, 'CT', 'FDK_CT.npy'))
-            recon_id = astra.data3d.create('-vol', vol_geom, data=ct_data)
+            recon_id = astra.data3d.create('-vol', vol_geom, data=ct_data[bin_num])
 
         # Set up the parameters for a reconstruction algorithm using the GPU
         cfg = astra.astra_dict(alg)
@@ -77,11 +84,11 @@ def run_full_recon(folder, alg, iterations, bins=bins):
         plt.figure(figsize=(8, 8))
         plt.imshow(rec[14], vmin=0, vmax=0.08)
         plt.show()
-        plt.savefig(os.path.join(directory, folder, 'fig', f'{alg[0:4]}_bin{bin_num}.png'))
+        plt.savefig(os.path.join(directory, folder, 'fig', f'{alg[0:4]}_bin{bin_num}_nofilt.png'))
         plt.close()
     stop = datetime.now().timestamp()
     print(f'Recon time: {stop-start:.2f} s')
-    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT_2.npy'), ct_img)
+    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT_no_filt.npy'), ct_img)
 
 
 def check_recon(folder, alg, iterations, bin_num):
@@ -138,7 +145,7 @@ def check_recon(folder, alg, iterations, bin_num):
 
 if __name__ == '__main__':
     directory = '/home/knoll/LDAData/'
-    folder = '21-02-19_CT_min_Gd/phantom_scan'
+    folder = '21-02-18_CT_water_only/phantom_scan'
     alg = 'FDK_CUDA'  # Algorithms: SIRT3D_CUDA, CGLS3D_CUDA, FDK_CUDA
     iterations = 100
 
