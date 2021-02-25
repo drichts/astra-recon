@@ -29,17 +29,19 @@ def run_full_recon(folder, alg, iterations, bins=bins):
     if alg != 'FDK_CUDA':
         ct_data = np.load(os.path.join(directory, folder, 'CT', 'FDK_CT.npy'))
 
-    raw_data_full = np.load(os.path.join(directory, folder, 'Data', 'data_corr_no_filt.npy'))
+    raw_data_full = np.load(os.path.join(directory, folder, 'Data', 'data_corr.npy'))
     raw_data_full = np.transpose(raw_data_full, axes=(3, 1, 0, 2))  # Transpose to (bins, rows, angles, columns)
-
+    print(np.shape(raw_data_full))
     # Change if isocentre is not directly in the center of the detector
     # raw_data_full = np.roll(raw_data_full, -2, axis=3)
     
     for bin_num in bins:
         
         # Get the right bin number
-        raw_data = raw_data_full[bin_num]
-        
+        # raw_data = raw_data_full[bin_num]
+        raw_data = np.load(os.path.join(directory, folder, 'Data', 'data_corr.npy'))[:, :, :, bin_num]
+        raw_data = np.transpose(raw_data, axes=(1, 0, 2))
+        print(np.shape(raw_data))
         # Create a 3D projection geometry with our cone-beam data
         # Parameters: 'acquisition type', number of detector rows, number of detector columns, data ndarray
         proj_geom = astra.create_proj_geom('cone', pixel_pitch, pixel_pitch, det_row_count, det_col_count, angles,
@@ -81,14 +83,14 @@ def run_full_recon(folder, alg, iterations, bins=bins):
         astra.data3d.delete(proj_id)
 
         # Show the resulting image
-        plt.figure(figsize=(8, 8))
-        plt.imshow(rec[14], vmin=0, vmax=0.08)
-        plt.show()
-        plt.savefig(os.path.join(directory, folder, 'fig', f'{alg[0:4]}_bin{bin_num}_nofilt.png'))
-        plt.close()
+        # plt.figure(figsize=(8, 8))
+        # plt.imshow(rec[14], vmin=0, vmax=0.08)
+        # plt.show()
+        # plt.savefig(os.path.join(directory, folder, 'fig', f'{alg[0:4]}_bin{bin_num}_test.png'))
+        # plt.close()
     stop = datetime.now().timestamp()
     print(f'Recon time: {stop-start:.2f} s')
-    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT_no_filt.npy'), ct_img)
+    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT_test.npy'), ct_img)
 
 
 def check_recon(folder, alg, iterations, bin_num):
