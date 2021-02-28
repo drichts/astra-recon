@@ -17,7 +17,6 @@ angles = np.linspace(0, 2 * np.pi, num_angles, False)
 
 bins = [0, 1, 2, 3, 4, 5, 6]
 
-
 def run_full_recon(folder, alg, iterations, bins=bins):
 
     # Array for the reconstructed data
@@ -38,10 +37,10 @@ def run_full_recon(folder, alg, iterations, bins=bins):
     for bin_num in bins:
         
         # Get the right bin number
-        # raw_data = raw_data_full[bin_num]
-        raw_data = np.load(os.path.join(directory, folder, 'Data', 'data_corr.npy'))[:, :, :, bin_num]
-        raw_data = np.transpose(raw_data, axes=(1, 0, 2))
-        print(np.shape(raw_data))
+        raw_data = raw_data_full[bin_num]
+        # raw_data = np.load(os.path.join(directory, folder, 'Data', 'data_corr.npy'))[:, :, :, bin_num]
+        # raw_data = np.transpose(raw_data, axes=(1, 0, 2))
+        
         # Create a 3D projection geometry with our cone-beam data
         # Parameters: 'acquisition type', number of detector rows, number of detector columns, data ndarray
         proj_geom = astra.create_proj_geom('cone', pixel_pitch, pixel_pitch, det_row_count, det_col_count, angles,
@@ -90,7 +89,7 @@ def run_full_recon(folder, alg, iterations, bins=bins):
         # plt.close()
     stop = datetime.now().timestamp()
     print(f'Recon time: {stop-start:.2f} s')
-    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT_test.npy'), ct_img)
+    np.save(os.path.join(directory, folder, 'CT', alg[0:4] + 'CT.npy'), ct_img)
 
 
 def check_recon(folder, alg, iterations, bin_num):
@@ -147,7 +146,7 @@ def check_recon(folder, alg, iterations, bin_num):
 
 if __name__ == '__main__':
     directory = '/home/knoll/LDAData/'
-    folder = '21-02-18_CT_water_only/phantom_scan'
+    folder = '21-02-26_CT_min_Gd_3862_2mA_SEC/phantom_scan'
     alg = 'FDK_CUDA'  # Algorithms: SIRT3D_CUDA, CGLS3D_CUDA, FDK_CUDA
     iterations = 100
 

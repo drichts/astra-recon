@@ -3,28 +3,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat, savemat
 
-folder1 = '/home/knoll/LDAData/21-02-18_CT_water_only/phantom_scan/CT'
-folder2 = '/home/knoll/LDAData/21-02-19_CT_min_vol/phantom_scan/CT'
-folder3 = '/home/knoll/LDAData/21-02-19_CT_min_Gd/phantom_scan/CT'
+folder1 = '/home/knoll/LDAData/21-02-24_CT_min_Au_2/phantom_scan/CT'
+folder2 = '/home/knoll/LDAData/21-02-26_CT_min_Au_SEC/phantom_scan/CT'
+# folder3 = '/home/knoll/LDAData/21-02-19_CT_min_Gd/phantom_scan/CT'
 
-# data_c = loadmat(os.path.join(folder1, 'CT.mat'))['ct_img']
-# data_s = np.load(os.path.join(folder1, 'FDK_CT_no_filt.npy'))
+data1 = np.load(os.path.join(folder1, 'FDK_CT.npy'))
+data2 = np.load(os.path.join(folder2, 'FDK_CT.npy'))
 # data_f = np.load(os.path.join(folder1, 'FDK_CT.npy'))
 
-bin_num = 2
+data1 = data1[3] - data1[2]
+data2 = data2[3] - data2[2]
 
-# for i in range(7, 15):
-#
-#     fig, ax = plt.subplots(1, 3, figsize=(12, 6))
-#     ax[0].imshow(data_f[bin_num, i], cmap='gray', vmin=0, vmax=0.08)
-#     # ax[0].set_title('FDK')
-#     ax[1].imshow(data_s[bin_num, i], cmap='gray', vmin=0, vmax=0.008)
-#     # ax[1].set_title('SIRT')
-#     ax[2].imshow(data_c[bin_num, :, :, i], cmap='gray', vmin=0, vmax=0.08)
-#     # ax[2].set_title('CGLS')
-#     plt.show()
-#     plt.pause(10)
-#     plt.close()
+bin_num = 5
+
+for i in range(7, 20):
+    i = 12
+    fig, ax = plt.subplots(1, 3, figsize=(12, 6))
+    ax[0].imshow(data1[i], cmap='gray', vmin=0, vmax=0.008)
+    # ax[0].set_title('FDK')
+    ax[1].imshow(data2[i], cmap='gray', vmin=0, vmax=0.008)
+    # ax[1].set_title('SIRT')
+    # ax[2].imshow(data_c[bin_num, :, :, i], cmap='gray', vmin=0, vmax=0.08)
+    # ax[2].set_title('CGLS')
+    plt.show()
+    plt.pause(10)
+    plt.close()
+    break
 
 ## Iteration check
 # data2 = np.load(os.path.join(folder, 'CGLS_iteration_check.npy'))
